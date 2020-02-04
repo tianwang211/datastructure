@@ -1,49 +1,54 @@
 class Trie {
 private:
     struct TrieNode{
-        TrieNode* next[26]={nullptr};
-        bool isEnd;  
+        TrieNode():isEnd(false),children(26,nullptr){}
+        
+        ~TrieNode(){
+            for(TrieNode* child:children){
+                if(child) delete child;
+            }
+        }
+        vector<TrieNode*> children;
+        bool isEnd;
     };
-    
-    TrieNode* root=nullptr;
+    std::unique_ptr<TrieNode> root;
 public:
-    
     /** Initialize your data structure here. */
-    Trie() {
-        root=new TrieNode();
+    Trie():root(new TrieNode()) {
     }
     
     /** Inserts a word into the trie. */
     void insert(string word) {
-        TrieNode* p;    
-        p=root;
-        for(auto c:word){
-            if(p->next[c-'a']==nullptr){
-                p->next[c-'a']=new TrieNode();
+        TrieNode* cur=root.get();
+        for(auto s:word){
+            if(cur->children[s-'a']==nullptr){
+                cur->children[s-'a']=new TrieNode();
             }
-            p=p->next[c-'a'];
+            cur=cur->children[s-'a'];
         }
-        p->isEnd=true;
+        cur->isEnd=true;
     }
     
     /** Returns if the word is in the trie. */
     bool search(string word) {
-        TrieNode* p(root);
-        for(auto c:word){
-            if(p->next[c-'a']==nullptr)
+        TrieNode* cur=root.get();
+        for(auto s:word){
+            if(cur->children[s-'a']==nullptr){
                 return false;
-            else p=p->next[c-'a'];
+            }
+            cur=cur->children[s-'a'];
         }
-        return p->isEnd;
+        return cur->isEnd;
     }
     
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(string prefix) {
-        TrieNode* p(root);
-        for(auto c:prefix){
-            if(p->next[c-'a']==nullptr)
+        TrieNode* cur=root.get();
+        for(auto s:prefix){
+            if(cur->children[s-'a']==nullptr){
                 return false;
-            else p=p->next[c-'a'];
+            }
+            cur=cur->children[s-'a'];
         }
         return true;
     }
