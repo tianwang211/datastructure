@@ -1,0 +1,33 @@
+class DSU {
+public:
+  DSU(int size):size_(size), parent_(size), rank_(size) {
+    iota(begin(parent_), end(parent_), 0);
+  }
+  
+  int Find(int n) {
+    if (parent_[n] != n) 
+      parent_[n] = Find(parent_[n]);
+    return parent_[n];
+  }
+  
+  void Union(int x, int y) {
+    int px = Find(x);
+    int py = Find(y);
+    if (px == py) return;
+    if (rank_[py] > rank_[px])
+      swap(px, py);
+    else if (rank_[py] == rank_[px])
+      ++rank_[px];
+    parent_[py] = px;
+    --size_;
+  }
+  
+  int Size() const {
+    return size_;
+  }
+  
+private:
+  int size_;
+  vector<int> ranks_;
+  vector<int> parent_;
+};
