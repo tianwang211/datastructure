@@ -1,7 +1,7 @@
 class MonotonicQueue{
   public:
   void push(int e){
-  while(!data_.empty() && e>data_.pop()) data_.pop_back();
+  while(!data_.empty() && e>data_.back()) data_.pop_back();
   data_.push_back(e);
   }
   
