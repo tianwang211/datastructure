@@ -1,0 +1,16 @@
+class MonotonicQueue{
+  public:
+  void push(int e){
+  while(!data_.empty() && e>data_.pop()) data_.pop_back();
+  data_.push_back(e);
+  }
+  
+  void pop(){
+  data_.pop_front();
+  }
+  
+  int max() const{return data_.front();}
+  
+  private:
+  deque<int>  data_;
+};
