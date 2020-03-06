@@ -1,0 +1,70 @@
+class NumArray {
+private:
+    struct Node{
+        int start;
+        int end;
+        int val;
+        Node* left;
+        Node* right;
+        Node(int s,int e):start(s),end(e),val(0),left(nullptr),right(nullptr){}
+        ~Node(){
+            if(left) delete left;
+            if(right) delete right;
+        }
+    };
+    Node* Treeroot;
+    Node* buildTree(int start,int end,vector<int>& nums){
+        Node* root=new Node(start,end);
+        for(int i=start;i<=end;i++){
+            root->val+=nums[i];
+        }
+        if(start==end) return root;
+        root->left=buildTree(start,(start+end)/2,nums);
+        root->right=buildTree((start+end)/2+1,end,nums);
+        return root;
+    }
+    int modify(int i,int val,Node* root){
+        int diff=0;
+        if(root->start==root->end){
+            diff=val-root->val;
+            root->val=val;
+            return diff;
+        }
+        int mid=(root->start+root->end)/2;
+        if(i<=mid) diff=modify(i,val,root->left);
+        else diff=modify(i,val,root->right);
+        root->val+=diff;
+        return diff;
+    }
+    
+    int qury(int i,int j,Node* root){
+        if(i==root->start && j==root->end) return root->val;
+        int mid=(root->start+root->end)/2;
+        if(j<=mid){return qury(i,j,root->left);}
+        else if(i>mid) return qury(i,j,root->right);
+        else {return qury(i,mid,root->left)+qury(mid+1,j,root->right);}
+    }
+public:
+    NumArray(vector<int>& nums) {
+        int n=nums.size();
+        if(!n) return;
+        Treeroot=buildTree(0,n-1,nums);
+    }
+    
+    void update(int i, int val) {
+        Node* cur=Treeroot;
+        modify(i,val,cur);
+    }
+    
+    int sumRange(int i, int j) {
+        if(i>j) sumRange(j,i);
+        return qury(i,j,Treeroot);
+    }
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray* obj = new NumArray(nums);
+ * obj->update(i,val);
+ * int param_2 = obj->sumRange(i,j);
+ */
