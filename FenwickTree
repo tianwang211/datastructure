@@ -1,0 +1,40 @@
+class FenwickTree{
+private:
+    vector<int> sum_nums;
+    
+    int lowbit(int i){
+        return i&(-i);
+    }
+public:
+    FenwickTree(){}
+    
+    void BuildFenwickTree(vector<int>& nums){
+        int n=nums.size();
+        sum_nums=vector<int> (n+1,0);
+        for(int i=0;i<n;i++){
+            int j=i+1;
+            while(j<=n){
+                sum_nums[j]+=nums[i];
+                j+=lowbit(j);
+            }
+        }
+    }
+    
+    void Update(int nums_index,int diff){
+        nums_index++;
+        while(nums_index<sum_nums.size()){
+            sum_nums[nums_index]+=diff;
+            nums_index+=lowbit(nums_index);
+        }
+    }
+    
+    int Query(int nums_index){
+        nums_index++;
+        int sum=0;
+        while(nums_index>0){
+            sum+=sum_nums[nums_index];
+            nums_index-=lowbit(nums_index);
+        }
+        return sum;
+    }
+};
